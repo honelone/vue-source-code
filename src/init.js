@@ -3,6 +3,7 @@
  */
 import { initState } from './state.js'
 import { compileToFunction } from './compiler/index.js'
+import { mountComponent } from './lifecycle.js'
 
 // initMixin 会接受 Vue 构造函数
 // -- 它会在 Vue 构造函数的原型上添加一个 _init 方法
@@ -56,5 +57,11 @@ export function initMixin(Vue) {
         options.render = render
       }
     }
+
+    // 上面的结果，最终都会得到一个 options.render 方法
+    // 下面我们要将这个模板挂载到页面
+    // -- 通过 mountComponent 实现
+    // -- 这个方法就是将 render -> 虚拟DOM -> 真实DOM 的方法
+    return mountComponent(vm, el)
   }
 }

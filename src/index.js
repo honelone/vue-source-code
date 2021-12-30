@@ -2,6 +2,8 @@
  * Vue 的入口文件
  */
 import { initMixin } from './init.js'
+import { renderMixin } from './render.js'
+import { lifecycleMixin } from './lifecycle.js'
 
 // Vue 构造函数
 function Vue(options) {
@@ -16,5 +18,8 @@ function Vue(options) {
 // 将 Vue 构造函数传给 initMixin
 // -- 这个方法会在原型上添加一个 _init 方法
 initMixin(Vue)
+
+renderMixin(Vue)
+lifecycleMixin(Vue)
 
 export default Vue
