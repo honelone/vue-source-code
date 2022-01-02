@@ -24,13 +24,17 @@
           }
         },
       })
+      // 到这里，我们就可以正常的将 data 中数据渲染到页面上了
+      // 但是在下面我们更新数据时，只能更新 data 中的数据，而不能更新页面上的数据
+      // 要更新页面上的数据只有手动去调用 _update 方法
 
-      // console.log(vm.name)
-      // vm.name = []
-      // vm.name.push(1)
-      // vm.name.unshift(2)
-      // vm.name.splice(1, 0, 3)
-      // console.log(vm.name)
+      console.log(vm.name)
+      vm.name = 'Composition'
+      vm.age = '25'
+      console.log(vm)
+      setTimeout(() => {
+        vm._update(vm._render())
+      }, 2000)
     </script>
   </body>
 </html>
