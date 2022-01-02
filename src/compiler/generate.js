@@ -30,7 +30,6 @@ function gen(node) {
     let match, index
 
     while ((match = defaultTagRE.exec(text))) {
-      console.log(match)
       // match为正则匹配返回的内容，是一个数组
 
       // index 代表匹配到的 {{ 的位置

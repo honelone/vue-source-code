@@ -24,17 +24,33 @@
           }
         },
       })
-      // 到这里，我们就可以正常的将 data 中数据渲染到页面上了
-      // 但是在下面我们更新数据时，只能更新 data 中的数据，而不能更新页面上的数据
-      // 要更新页面上的数据只有手动去调用 _update 方法
+      // 》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》
+      // 到这里，我们就可以实现初始渲染和更新渲染了
+      // -- 更新渲染会在渲染时，会实例化一个 watcher，并将渲染的方法 updateComponent 传入
+      // -- Watcher 在实例化时还先将当前 watcher 实例推入 Dep类 的 target 上
+      // ---- 然后调用这个 updateComponent 方法
+      // -- updateComponent 方法在调用时，就会去生成 虚拟DOM和生成真实DOM
+      // -- vm._render 方法用于生成虚拟DOM
+      // ---- 在生成虚拟DOM时，就会去访问模板中用到的数据
+      // ---- 在访问数据时就会实例化一个订阅器 dep，并收集当前 watcher 的依赖
+      // ---- 收集依赖的同时，会将当前的 dep 收集到当前的 watcher 上
+      // ---- 即两者是相互收集、相互依赖的，是多对多的关系
+      // 》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》
+      // 修改数据后，页面上也会同步更新
+      // -- 修改数据，会触发 setter 函数，并向 dep 发出通知，调用 notify 方法
+      // -- notify 方法会去调用 dep 收集的 watcher 上的更新方法 update
+      // -- update 方法会去调用 Watcher 上的 getter 方法
+      // -- getter 方法就是在 mountComponent 方法中定义的 updateComponent 方法
+      // -- updateComponent 方法就是生成并渲染 虚拟DOM 的方法 vm._update(vm._render)
+      // -- vm._render 方法会根据修改后的数据重新生成新的 虚拟DOM
+      // -- vm._update 方法会根据新的 虚拟DOM 重新渲染 真实DOM
+      // 》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》
 
-      console.log(vm.name)
-      vm.name = 'Composition'
-      vm.age = '25'
-      console.log(vm)
       setTimeout(() => {
-        vm._update(vm._render())
-      }, 2000)
+        vm.name = 'Composition'
+        vm.age = '25'
+        console.log(vm)
+      }, 3000)
     </script>
   </body>
 </html>

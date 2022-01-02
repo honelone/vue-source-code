@@ -61,6 +61,10 @@ methodsToPatch.forEach(method => {
     // -- 观测的就是新增的元素，也即 inserted
     if (inserted) ob.observeArray(inserted)
 
+    // 这里要新增一个派发数组更新的通知
+    // -- 调用实例上的 notify 方法
+    ob.dep.notify()
+
     return result
   }
 })
