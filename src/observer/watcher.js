@@ -4,6 +4,8 @@
  */
 
 import { pushTarget, popTarget } from './dep.js'
+// 这里我们引入一个 queueWatcher 方法，用于存储异步更新队列
+import { queueWatcher } from './scheduler.js'
 
 // 定义一个自增变量，用于标识每一个观察者
 let id = 0
@@ -53,8 +55,16 @@ export class Watcher {
     }
   }
 
+  // 改写 update 方法，并新增一个 run 方法替换原来的 update 方法
   // 这个方法用于更新
   update() {
+    console.log('上面更改放入异步队列')
+    // 将当前要更新的 watcher 存入异步队列中
+    queueWatcher(this)
+  }
+  run() {
+    console.log('当前任务队列完毕，开始执行当前任务队列的微任务-------')
+    console.log('开始重新渲染页面-------')
     this.get()
   }
 }

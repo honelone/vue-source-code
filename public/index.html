@@ -12,6 +12,7 @@
       <p>Vue源码</p>
       <span>{{ name }}</span>
       <span>{{ age }}</span>
+      <span>{{ hobbies }}</span>
     </div>
     <script src="/dist/umd/vue.js"></script>
     <script>
@@ -20,7 +21,8 @@
         data() {
           return {
             name: 'Ruovan',
-            age: 25,
+            age: 24,
+            hobbies: [1, 2, 3],
           }
         },
       })
@@ -45,12 +47,18 @@
       // -- vm._render 方法会根据修改后的数据重新生成新的 虚拟DOM
       // -- vm._update 方法会根据新的 虚拟DOM 重新渲染 真实DOM
       // 》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》》
+      // 如果这里不处理，即不使用异步更新的方式来渲染页面
+      // 那么每个数据在修改一次后，都会去重新执行 虚拟DOM->真实DOM 的过程
+      // 这就十分消耗性能， （这里将会触发两次渲染）
+      // 所以我们将所有的数据更改后的页面渲染都放在异步队列中去
+      // 这样页面就会在所有数据更新完成后才会去重新生成新的页面
+
+      // vm.hobbies[0] = 4
 
       setTimeout(() => {
-        vm.name = 'Composition'
-        vm.age = '25'
-        console.log(vm)
-      }, 3000)
+        console.log('setTimeout开始执行-------')
+        vm.name = 'hello'
+      })
     </script>
   </body>
 </html>

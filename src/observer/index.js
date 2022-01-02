@@ -88,7 +88,6 @@ function defineReactive(data, key, value) {
       // -- 当然，这里还要注意一点，就是数组的依赖收集和对象的依赖收集不同
       // -- 所以这里还要进行一个判断
 
-      console.log(Dep.target)
       // 1.首先进行一个订阅者（观察者）的判断
       // -- 如果有观察者，才会进行依赖的收集
       if (Dep.target) {

@@ -17,8 +17,8 @@ export function mountComponent(vm, el) {
 
   // 这里，我们要把上面生成 虚拟DOM和渲染真实DOM 的方法放在一个函数里
   let updateComponent = () => {
-    console.log('渲染或者刷新页面')
     vm._update(vm._render())
+    console.log('渲染页面结束-------')
   }
 
   // 然后，我们会在这里创建一个观察者实例，并将这个函数传递给观察者

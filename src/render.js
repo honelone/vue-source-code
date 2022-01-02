@@ -1,6 +1,7 @@
 /**
  * 这个文件是转化为虚拟DOM的主要方法
  */
+import { nextTick } from './util/next-tick.js'
 import { createElement, createTextNode } from './vdom/index.js'
 
 export function renderMixin(Vue) {
@@ -32,4 +33,7 @@ export function renderMixin(Vue) {
   Vue.prototype._s = function (val) {
     return val == null ? '' : typeof val === 'object' ? JSON.stringify(val) : val
   }
+
+  // 将 nextTick 挂载在原型上
+  Vue.prototype.$nextTick = nextTick
 }
