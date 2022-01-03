@@ -21,7 +21,10 @@ export function mountComponent(vm, el) {
     console.log('渲染页面结束-------')
   }
 
-  // 然后，我们会在这里创建一个观察者实例，并将这个函数传递给观察者
+  // 然后，我们会在这里创建一个观察者实例 new Watcher()
+  // -- 并将这个 updateComponent 方法 传递给观察者
+  // -- 在观察者里面调用这个方法进行渲染
+  // -- 每一个组件都有一个渲染 watcher
   new Watcher(vm, updateComponent, null, true)
 }
 
