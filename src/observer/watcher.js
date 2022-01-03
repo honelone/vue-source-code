@@ -15,13 +15,16 @@ export class Watcher {
     this.options = options
 
     this.id = id++
+
     // 这个 deps 用于存储当前观察者的 Dep 订阅器
     // -- 每个观察者都有不同的订阅器
     // -- 然后通过下面的 depsId 来去重
     this.deps = []
     this.depsId = new Set()
+
     // 如果传入的表达式参数是一个函数，那么就后面就会调用这个函数
     // -- 在渲染时，这个 exprOrFn 就是 vm._update(vm._render())
+    // -- 所以我们调用时，就会实现 虚拟DOM->真实DOM 的过程
     if (typeof exprOrFn === 'function') {
       this.getter = exprOrFn
     }

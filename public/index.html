@@ -10,8 +10,8 @@
   <body>
     <div id="app">
       <p>Vue源码</p>
-      <span>{{ name }}</span>
-      <span>{{ age }}</span>
+      <span>{{ info }}</span>
+      <span>{{ hobbies }}</span>
     </div>
     <script src="/dist/umd/vue.js"></script>
     <script>
@@ -19,8 +19,13 @@
         el: '#app',
         data() {
           return {
-            name: 'Ruovan',
-            age: 25,
+            // name: 'Ruovan',
+            // age: 25,
+            info: {
+              phone: '123',
+              address: '234',
+            },
+            hobbies: [1, 2, 3],
           }
         },
       })
