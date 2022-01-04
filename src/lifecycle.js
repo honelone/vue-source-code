@@ -36,6 +36,22 @@ export function lifecycleMixin(Vue) {
     // -- 初始化渲染、更新渲染都通过这个 patch 方法
     // -- 该方法会返回一个真实的 DOM
     // -- 需要将其赋值给原来的节点，用于渲染到页面上
-    vm.$el = patch(vm.$el, vnode)
+    // vm.$el = patch(vm.$el, vnode)
+
+    // 现在需要保留一份上次的 vnode
+    const prevVnode = vm._vnode
+    // 然后将当前传入的 vnode 赋值给 vm
+    vm._vnode = vnode
+
+    // 如果是初始渲染，那么 vm._vnode 是不存在的
+    if (!prevVnode) {
+      // 所以这里直接将 vm.$el 作为旧节点传入
+      vm.$el = patch(vm.$el, vnode)
+    } else {
+      // 否则， vm._vnode 存在，则为更新渲染
+      // -- 需要把上次的虚拟DOM作为旧节点传入
+      // -- 这里传入后，就会进行 diff 算法
+      vm.$el = patch(prevVnode, vnode)
+    }
   }
 }
