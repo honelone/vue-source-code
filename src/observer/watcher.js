@@ -65,6 +65,7 @@ export class Watcher {
     // 将当前要更新的 watcher 存入异步队列中
     queueWatcher(this)
   }
+  // 会在下一个任务队列中调用
   run() {
     console.log('当前任务队列完毕，开始执行当前任务队列的微任务-------')
     console.log('开始重新渲染页面-------')

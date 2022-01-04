@@ -11,10 +11,12 @@ let has = {}
 
 // 这个方法用于循环调用队列中的 watche 的 run 方法
 // -- 调用之后要清空当前队列
-// -- 这个方法会在 nextTick 中去调用，
+// -- 这个方法会在 nextTick 中去调用
 // -- 而 nextTick 是一个微任务
+// -- 所以 DOM 的更新会在当前队列中的宏任务执行完后更新
 function flushSchedulerQueue() {
   for (let index = 0; index < queue.length; index++) {
+    // 调用 run 方法进行更新
     queue[index].run()
   }
   queue = []
@@ -30,7 +32,8 @@ export function queueWatcher(watcher) {
     queue.push(watcher)
     // 存储 id
     has[id] = true
-    // 然后将 flushSchedulerQueue 方法传入 nextTick 中
+    // 然后将 flushSchedulerQueue 方法传入 nextTick 中执行
+    // -- 只不过它会在微任务中去执行
     nextTick(flushSchedulerQueue)
   }
 }
