@@ -34,18 +34,15 @@ methodsToPatch.forEach(method => {
       // -- 我们用 inserted 来接收这个元素
       // -- args 是数组
       case 'push':
-        console.log('push了', args)
         inserted = args
         break
       case 'unshift':
-        console.log('unshift了', args)
         inserted = args
         break
       // 调用 splice 方法，会有3个参数
       // -- 第3个参数即是新增的元素
       // -- 所以 inserted 要取第三个值（索引为2）
       case 'splice':
-        console.log('splice了', args)
         inserted = args.splice(2)
       default:
         break

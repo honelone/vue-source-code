@@ -82,9 +82,6 @@ function defineReactive(data, key, value) {
 
   Object.defineProperty(data, key, {
     get() {
-      console.log('获取到值了', value)
-      console.log(Dep.target)
-      console.log('dep', dep)
       // 在返回响应式数据之前，我们要对其进行依赖收集
       // -- 在使用这个数据时，就会触发 getter 函数
       // -- 那么我们就在这个函数中进行依赖收集
@@ -96,13 +93,10 @@ function defineReactive(data, key, value) {
       if (Dep.target) {
         // 2.然后触发实例上的 depend 方法
         dep.depend()
-        console.log('>>>>>>', data)
         // 3.接下来进行一个判断
         // -- 如果属性值是对象或者数组，就会有返回值
         // -- 然后就要收集属性值的依赖
         if (childOb) {
-          console.log(childOb.dep)
-          console.log('----', value)
           childOb.dep.depend()
           // 然后如果属性值是数组，就会对数组内部的数据进行依赖收集
           if (Array.isArray(value)) {
@@ -122,7 +116,6 @@ function defineReactive(data, key, value) {
       // -- 因为用户可能设置的是一个对象
       observe(newValue)
 
-      console.log('设置了新值', newValue)
       value = newValue
 
       // 在设置了新值之后，我们要发出一个通知给订阅器，表示这个数据已经被更改了

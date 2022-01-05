@@ -19,6 +19,7 @@ export function patch(oldVnode, newVnode) {
   // 对 oldVnode 的节点类型进行判断
   if (isRealElement) {
     // 初次渲染 ======
+    console.log('开始进行初次渲染')
     const oldElm = oldVnode
     const parentElm = oldElm.parentNode
     // 调用下面的 createElm 方法将 虚拟DOM转化成真实DOM
@@ -34,6 +35,7 @@ export function patch(oldVnode, newVnode) {
 
     // 对新旧节点的标签进行判断
     if (oldVnode.tag !== newVnode.tag) {
+      console.log('标签不同，替换', oldVnode.tag, '为', newVnode.tag)
       // 如果不一致，则会替换掉旧节点
       // -- 通过 createElm 新建一个真实节点
       // -- 然后调用 replaceChild 方法，将旧标签替换为新标签
@@ -46,6 +48,7 @@ export function patch(oldVnode, newVnode) {
     if (!oldVnode.tag) {
       // 则比较其文本内容
       if (oldVnode.text !== newVnode.text) {
+        console.log('文本不同，替换', oldVnode.text, '为', newVnode.text)
         // 如果文本内容不同，则替换掉旧节点的文本
         oldVnode.el.textContent = newVnode.text
       }
@@ -73,10 +76,12 @@ export function patch(oldVnode, newVnode) {
       // -- 则需要一个新方法 updateChildren 来对其子级进行比较
       updateChildren(el, oldChildren, newChildren)
     } else if (oldChildren.length) {
+      console.log('删除多余子节点：', oldChildren)
       // 只有旧节点有子级
       // -- 则需要将其子级删除
       el.innerHTML = ''
     } else if (newChildren.length) {
+      console.log('新增子节点', newChildren)
       // 只有新节点有子级
       // -- 则需要将新节点的子级加入到当前真实DOM el 中
       for (let i = 0; i < newChildren.length; i++) {
@@ -184,7 +189,7 @@ function updateChildren(parent, oldChildren, newChildren) {
   let newEndIndex = newChildren.length - 1
   let newEndVnode = newChildren[newEndIndex]
 
-  // 根据 key值，来创建 节点的子级的映射关系
+  // 根据 key值，来创建节点的子级的映射关系
   // -- 表示的是 key 值对应的节点的下标
   function makeIndexByKey(children) {
     let map = {}
@@ -200,51 +205,66 @@ function updateChildren(parent, oldChildren, newChildren) {
   // -- 当新旧节点的指针的起始位置小于结束位置时，才进行循环
   while (oldStartIndex <= oldEndIndex && newStartIndex <= newEndIndex) {
     if (!oldStartVnode) {
+      // 如果当前 oldChildren 的开始指针 oldStartVnode 没有值，则向后移动一位
       oldStartVnode = oldChildren[++oldStartIndex]
     } else if (!oldEndVnode) {
+      // 如果当前 oldChildren 的结束指针 oldEndVnode 值为空，则向前移动一位
       oldEndVnode = oldChildren[--oldEndIndex]
-    } else if (isSameVnode(oldStartVnode, newStartVnode)) {
-      // 头和头对比 依次向后追加
-      // 递归比较
+    }
+    // 以下，我们会进行四种比较，分别是新旧节点的 头与头、尾与尾、头与尾、尾与头
+    // -- 先是判断两者是否为同一 标签和Key值
+    // -- 如果相同，则进行其内部节点的递归比较，调用 patch 方法
+    // ---- 然后移动指针，向前或者向后，并进行下一次循环
+    // -- 如果不相同，则会进行最后一种比较方法 —— 暴力比较法
+    else if (isSameVnode(oldStartVnode, newStartVnode)) {
+      // 头和头对比
       patch(oldStartVnode, newStartVnode)
       oldStartVnode = oldChildren[++oldStartIndex]
       newStartVnode = newChildren[++newStartIndex]
     } else if (isSameVnode(oldEndVnode, newEndVnode)) {
-      // 尾和尾对比 依次向前追加
+      // 尾和尾对比
       patch(oldEndVnode, newEndVnode)
       oldEndVnode = oldChildren[--oldEndIndex]
       newEndVnode = newChildren[--newEndIndex]
     } else if (isSameVnode(oldStartVnode, newEndVnode)) {
-      // 旧的头和新的尾相同 把旧的头部移动到尾部
+      // 旧节点的头指针 和 新节点的尾指针
       patch(oldStartVnode, newEndVnode)
-      parent.insertBefore(oldStartVnode.el, oldEndVnode.el.nextSibling) // insertBefore可以移动或者插入真实dom
+      // 将这个 旧节点的头指针 插入到 旧节点的尾指针 之后
+      parent.insertBefore(oldStartVnode.el, oldEndVnode.el.nextSibling)
       oldStartVnode = oldChildren[++oldStartIndex]
       newEndVnode = newChildren[--newEndIndex]
     } else if (isSameVnode(oldEndVnode, newStartVnode)) {
-      // 旧的尾和新的头相同 把旧的尾部移动到头部
+      // 旧节点的尾指针 和新节点的头指针
       patch(oldEndVnode, newStartVnode)
+      // 将这个 旧节点的尾指针 插入到 旧节点的头指针 之前
       parent.insertBefore(oldEndVnode.el, oldStartVnode.el)
       oldEndVnode = oldChildren[--oldEndIndex]
       newStartVnode = newChildren[++newStartIndex]
     } else {
-      // 上述四种情况都不满足 那么需要暴力对比
-      // 根据旧的子节点的key和index的映射表 从新的开始子节点进行查找 如果可以找到就进行移动操作 如果找不到则直接进行插入
+      // 上述四种情况都不满足，那么执行暴力对比法
+      // -- 根据旧节点的 key-index 映射表
+      // -- 去查找 newChildren 当前的开始指针 newStartVnode 是否在这个映射表里面
+      // -- 如果可以找到，表示移动了位置，则进行移动操作
+      // -- 如果找不到，表示为新增的，则直接进行插入
 
-      // 从旧节点的 key-index映射表中去读取 当前新节点的开始节点的key
+      // 从旧节点 oldChildren 的 key-index映射表中去读取 newStartVnode 的 key
+      // -- 如果有返回值，则存在，否则，不存在
       let moveIndex = map[newStartVnode.key]
+
       // 判断 moveIndex 是否为空
       if (!moveIndex) {
         // 如果 moveIndex 为空，则表示 旧节点没有这个节点
-        // -- 所以我们需要 将当前的新节点的开始节点 插入到真实DOM中的 当前旧节点的开始节点的 前面
+        // -- 所以我们需要 将当前新节点的开始指针 newStartVnode 插入到真实DOM中
+        // -- 位置是 当前旧节点的开始指针的 前面
         parent.insertBefore(createElm(newStartVnode), oldStartVnode.el)
       } else {
-        // 如果 moveIdnex 不为空，则表示 旧节点中有这个节点，只是它当前的位置和新节点的位置不匹配
+        // 如果 moveIdnex 不为空，则表示 旧节点中有对应的 新节点的开始指针，只是它当前的位置和新节点的位置不匹配
         // 所以，我们要先获取到对应的旧节点
         let moveVnode = oldChildren[moveIndex]
-        // 然后将 拿到的对应的旧节点的位置 置空
+        // 然后将 moveIndex 对应的旧节点的值 置空
         // -- 这个是占位操作，避免数组塌陷，用于防止旧节点移动走了之后破坏了初始的映射表位置
         oldChildren[moveIndex] = undefined
-        // 再将这个拿到的旧节点插入到 当前旧节点的开始节点的 前面
+        // 再将这个拿到的旧节点插入到 当前旧节点的开始指针的 前面
         parent.insertBefore(moveVnode.el, oldStartVnode.el)
         // 最后再比较新新旧节点的差异
         // -- 注意，上面移动的是 Key值 相同的节点，但并不代表这两个节点是相同的，所以还要进行比较
@@ -252,6 +272,7 @@ function updateChildren(parent, oldChildren, newChildren) {
       }
     }
   }
+
   // 如果旧节点循环完毕了，但是新节点还有
   // -- 则表示剩下的新节点需要被添加到头部或者尾部
   if (newStartIndex <= newEndIndex) {

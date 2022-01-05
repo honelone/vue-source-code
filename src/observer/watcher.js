@@ -61,14 +61,11 @@ export class Watcher {
   // 改写 update 方法，并新增一个 run 方法替换原来的 update 方法
   // 这个方法用于更新
   update() {
-    console.log('上面更改放入异步队列')
     // 将当前要更新的 watcher 存入异步队列中
     queueWatcher(this)
   }
   // 会在下一个任务队列中调用
   run() {
-    console.log('当前任务队列完毕，开始执行当前任务队列的微任务-------')
-    console.log('开始重新渲染页面-------')
     this.get()
   }
 }
