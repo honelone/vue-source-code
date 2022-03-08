@@ -28,7 +28,12 @@ export function initState(vm) {
   }
 }
 
+// 以下是上面需要调用的各种方法
+
+// 初始化 props
 function initProps(vm) {}
+
+// 初始化 methods
 function initMethod(vm) {}
 
 // 初始化 data
@@ -36,10 +41,10 @@ function initData(vm) {
   // 先获取到 vm 中的 data
   let data = vm.$options.data
 
-  // vm.$options.data 可以是一个对象，也可以是一个函数，所以这里要处理一下
-  // -- 通过 call 改变 this，从而获取到 vm.$options.data函数 返回的 data 对象
+  // vm.$options.data 可以是一个对象，也可以是一个函数，所以这里要统一处理成对象
+  // -- 通过 call 改变 this，从而获取到 vm.$options.data 函数返回的 data 对象
   // -- 然后我们将这个 data 挂在 vm 的 _data 属性上
-  // -- 并且将其赋值给这里的 data
+  // -- 并且将其再重新赋值给这里的 data
   data = vm._data = typeof data === 'function' ? data.call(vm) : data || {}
 
   // 先使用 proxy 进行代理
@@ -52,9 +57,14 @@ function initData(vm) {
   // 在代理之后就通过 observe 来进行数据的观测
   observe(data)
 }
+
+// 初始化 computed
 function initComputed(vm) {}
+
+// 初始化 watch
 function initWatch(vm) {}
 
+// --------------------------------------------
 // 代理方法 -- 即让 vm._data.key ==> vm.key
 function proxy(object, sourceKey, key) {
   Object.defineProperty(object, key, {

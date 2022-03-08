@@ -18,3 +18,6 @@ export function initMixin(Vue) {
     initState(vm)
   }
 }
+// 注：所以，在Vue中是可以通过 this.$options 来访问 data 中的数据的
+// -- 即重置 data 数据的方法 ： Object.assign(this.$data, this.$options.data())
+// -- 这个 this.$options.data() 就是这里的 options 参数中的 data
