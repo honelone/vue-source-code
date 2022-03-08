@@ -5,6 +5,8 @@ import { parse } from './parse'
 import { generate } from './generate'
 
 export function compileToFunction(template) {
+  // 顺序： template -> AST -> code -> render
+
   // 先将 template 转化为 ast
   let ast = parse(template)
   // console.log(ast)
@@ -24,6 +26,6 @@ export function compileToFunction(template) {
   // 这个即最终的 render 函数
   // -- 在调用 render 函数时，可以使用 call 改变 this
   // -- 然后会通过 _c,_v,_s 这些方法进行 解析、挂载、渲染
-  // -- 至于 _c,_v,_s这些方法，在 vdom/index.js 文件中定义了的
+  // -- 至于 _c,_v,_s 这些方法，在 vdom/index.js 文件中定义了的
   return renderFn
 }

@@ -39,6 +39,8 @@ export function initMixin(Vue) {
     // 接下来有一个顺序 render > template > el
 
     // 默认先查找有没有 render 方法
+    // -- 如果有 render 方法，就不需要进行下面操作
+    // -- 因为下面的操作就是为了生成一个 render 函数
     if (!options.render) {
       // 没有 render 方法，则获取 template 属性，对模板进行编译
       let template = options.template
@@ -49,12 +51,17 @@ export function initMixin(Vue) {
         template = el.outerHTML
       }
 
+      // 即，到这里，是一定会有一个 template 属性的
+
       // 然后将 template 转换为 render 函数
+      // -- 需要使用 compileToFunction 方法
       if (template) {
         // compileToFunction 方法是从外面引入的
         const render = compileToFunction(template)
         options.render = render
       }
     }
+
+    // 最后的最后，这个 render 函数就是类似于 _c,_s,_v 的方法
   }
 }
