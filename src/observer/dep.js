@@ -20,7 +20,7 @@ export class Dep {
       // 如果当前 watcher 存在
       // -- 那么就调用 Watcher 上的方法收集依赖
       // -- 为什么是收集订阅器 Dep?
-      // -- 因为最终由是 Dep 来发出更新通知的
+      // -- 因为最终是由 Dep 来发出更新通知的
       // -- 收集了这个订阅器，就表示会接受这个订阅器发出的通知
       Dep.target.addDep(this)
     }
